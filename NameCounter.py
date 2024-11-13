@@ -5,14 +5,13 @@ import os
 from collections import defaultdict
 from datetime import date
 today = date.today()
-#Insert desired day below
 
 def list_log_files(folder_path):
     try:
-        # Get the list of all files and folders in the specified directory
+        #Get the list of all files and folders in the specified directory
         contents = os.listdir(folder_path)
        
-        # Filter the contents to include only files starting with "log_"
+        #Filter the contents to include only files starting with "log_"
         log_files = [file for file in contents if file.startswith("log_")]
        
         if log_files:
@@ -26,7 +25,6 @@ def list_log_files(folder_path):
     except PermissionError:
         print(f"Permission denied to access '{folder_path}'.")
 
-# Specify the folder path here
 folder_path = '/home/hayden/Downloads'
 list_log_files(folder_path)
 
