@@ -15,8 +15,7 @@ import re
 
 #Initialize webcam
 video_capture = cv2.VideoCapture(0)
-#cv2.namedWindow("FaceRec", cv2.WND_PROP_FULLSCREEN)
-#cv2.setWindowProperty("FaceRec", cv2.WND_PROP_FULLSCREEN, cv2.WND_PROP_FULLSCREEN)
+
 faces_folder = "faces"
 known_face_encodings = []
 known_face_names = []
@@ -58,7 +57,7 @@ high_priority = {
         "first_identify": True,
         "reset": None,
         "timer": 10,
-        "audio": pygame.mixer.Sound('/home/hayden/Downloads/AudioTriggers/bbtrimmed.mp3')
+        "audio": pygame.mixer.Sound('/home/hayden/Downloads/AudioTriggers/eftrimmed.mp3')
     },
     "JesseSowell": {
         "first_identify": True,
@@ -77,14 +76,31 @@ high_priority = {
         "reset": None,
         "timer": 10,
         "audio": pygame.mixer.Sound('/home/hayden/Downloads/AudioTriggers/tibtrimmed.mp3')
+    },
+    "HannahKermicle": {
+        "first_identify": True,
+        "reset": None,
+        "timer": 10,
+        "audio": pygame.mixer.Sound('/home/hayden/Downloads/AudioTriggers/hmctrimmed.mp3')
     }
 }
 known_face_names = remove_numbers_from_strings(known_face_names)
+
+#REMOVE LINES TO HAVE DEFAULT FEED SIZE (1/2)
+cv2.namedWindow("FaceRec", cv2.WND_PROP_FULLSCREEN)
+cv2.setWindowProperty("FaceRec", cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
+screen_width, screen_height = pyautogui.size()
+#############################################
+#THESE LINES MUST BE HERE AS WEBCAM WILL FAULT OPEN AS IT MUST WAIT TILL AFTER TRAINING SESH
+
+#TOLERANCE FOR FACE RECOGNITION. LOWER NUMBER = STRICTER TOLERANCE. HIGHER NUMBER = LESS TOLERANCE
+tolerance = 0.55 
 
 while True:
     # Grab a single frame of video
     ret, frame = video_capture.read()
     current_time = datetime.now().strftime("%H:%M")
+    #Line below necessary to flip webcam feed. Removing the line makes it act as a camera instead of a mirror.
     frame = cv2.flip(frame, 1)
     rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
     face_locations = face_recognition.face_locations(rgb_frame)
@@ -92,7 +108,7 @@ while True:
 
     for (top, right, bottom, left), face_encoding in zip(face_locations, face_encodings):
         # See if the face is a match for the known face(s)
-        matches = face_recognition.compare_faces(known_face_encodings, face_encoding)
+        matches = face_recognition.compare_faces(known_face_encodings, face_encoding, tolerance=tolerance)
 
         name = "Unknown"
         ####Uncomment the line below to record all individuals, even unknown####
@@ -128,17 +144,29 @@ while True:
         font = cv2.FONT_HERSHEY_DUPLEX
         cv2.putText(frame, name, (left + 6, bottom - 6), font, 1.0, (255, 255, 255), 1)
 
-    # Display the resulting image
-    cv2.imshow('FaceRec', frame)
+    #REMOVE LINES TO HAVE DEFAULT FEED SIZE (2/2)
+    frame_height, frame_width = frame.shape[:2]
+    scale = min(screen_width / frame_width, screen_height / frame_height)
+    new_width = int(frame_width * scale)
+    new_height = int(frame_height * scale)
+    resized_frame = cv2.resize(frame, (new_width, new_height))
 
-    # Hit 'q' on the keyboard to quit!
+    screen = np.zeros((screen_height, screen_width, 3), dtype=np.uint8)
+    y_offset = (screen_height - new_height) // 2
+    x_offset = (screen_width - new_width) // 2
+    screen[y_offset:y_offset + new_height, x_offset:x_offset + new_width] = resized_frame
+    #############################################
+    # Display the frame in full screen
+    cv2.imshow("FaceRec", screen)
+
+    #Hit 'q' on the keyboard to quit!
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
     if current_time == "23:59":
         print("CLOSING APPLICATION")
         pyautogui.press('q')
         break
-# Release handle to the webcam
+#Release handle to the webcam
 video_capture.release()
 cv2.destroyAllWindows()
 
