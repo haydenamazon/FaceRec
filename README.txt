@@ -8,11 +8,7 @@ MasterScript.py: This is the master script of the program, as outlined by name. 
                  The script begins by showing the current process ID, *note this ID will change upon each execution. Process ID is shown in the event of potential crashes. A simple 'kill' command followed by the PID will close the program.
                  After the PID is shown, the script will run. The script can take a while to execute as it is a bit resource intensive and has to fetch all the contents from a synced file before the webcam opens.
                  Next, the webcam will open on the left side of the screen. Simply click on the window to open the webcam.
-                 The webcam will be a fourth of the screen size. Do NOT click on any of the buttons lining the top of the webcam application. This pop-up is built by python, therefore the buttons do not work or cause issues with the programming.
-                 Move the webcam to the middle of the screen by clicking and dragging the window. Then access 'Universal Access' from settings. In the 'seeing' content box, click on 'Zoom' to open the screen magnificiation window.
-                 Set Magnification to: 2.25. Then click the slider in the top right of the mini window turning it green.
-                 Situate the screen to center the webcam feed.
-                 Close tabs if desired.
+                 The webcam will open to max screen size available with respects to window aspect ratio.
                  
                  'MasterScript.py' is broken into two code segments.
                  First:
